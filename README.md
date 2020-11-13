@@ -1,29 +1,37 @@
 # Bitmoji Sticker Selector
 
-Use Bitmoji stickers (www.bitmoji.com) on Linux with Telegram! 
+Use Bitmoji stickers (www.bitmoji.com) on Linux with Telegram!
+All stickers are downloaded and available localy.
+(You are not depend on www.bitmoji.com after resources was downaloded) 
 
 !["main"](images/all.png "main")
+
 *Main window*
 
 !["search"](images/search.png "search")
+
 *Search*
 
 !["profiles"](images/profiles.png "profiles")
+
 *Profiles*
 
 !["info"](images/rightbutton.png "info")
+
 *After you press right mouse button on sticker and holding it*
 
 !["select"](images/leftbutton.png "select")
+
 *After you press left mouse button*
 
 !["send"](images/leftbuttonresult.png "send")
+
 *After you pressed __Send__*
 
 Images are loading on scroll.
 When you press Esc the search field will be clear or application will be exit if field is clean.
 
-## DEPENDENCIES
+## DEPENDENCIES (Ubuntu)
 ```
 sudo apt-get install python3-pip python3-tk python3-pil python3-pil.imagetk
 sudo apt-get install curl webp imagemagick zip
