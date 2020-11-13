@@ -1,0 +1,15 @@
+#!/bin/bash
+
+COLS=8
+ROWS=5
+X=100
+Y=100
+TMPFILE=/tmp/bitmoji.webp
+
+cd "$( dirname "${BASH_SOURCE[0]}" )"
+F="$(python3 bitmoji.py $COLS $ROWS $X $Y $TMPFILE)"
+if [ -n "$F" ]; then
+    echo -n "file://$F" | xclip -selection clipboard -t text/uri-list
+    xvkbd -window 'Telegram*' -xsendevent -text "\\Cv" 2>/dev/null
+fi
+

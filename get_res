@@ -1,0 +1,129 @@
+#!/bin/bash
+
+if [ -z "$1" ]; then
+    echo "Usage: $0 \$ID"
+    exit 1
+fi
+
+ID="$1"
+
+function ctrlc(){
+    echo
+    echo "*** CTRL + C ***"
+    kill -9 $(jobs -p) 2>/dev/null
+    exit
+}
+trap ctrlc SIGINT
+
+function curl (){
+    AGENT="User-Agent: Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Ubuntu Chromium/81.0.4044.122 Chrome/81.0.4044.122 Safari/537.36"
+    for i in 1 2 3; do
+        /usr/bin/curl -s -H "$AGENT" "$@"
+        [ $? -eq 0 ] && return 0
+    done
+    echo
+    echo "Cann't download $@"
+    exit
+}
+
+rm -rf tmp
+mkdir tmp
+cd tmp
+# ======
+
+curl "https://api.bitmoji.com/content/templates" -o templates
+cat templates | python3 -c 'import json,sys;s=json.load(sys.stdin);[print(i["comic_id"]) for i in s["imoji"]]' | sort -u | sed 's|^"||;s|"$||'  > list
+
+LEN=$(cat list | wc -l)
+
+mkdir orig && cd orig
+count=0
+J=8
+yes '' | head -n $J | cat ../list - | while read i; do
+    trap ctrlc SIGINT
+    if [ -n "$i" ]; then
+        curl -o $i.png "https://sdk.bitmoji.com/render/panel/$i-$ID-v1.png?transparent=1&palette=1&scale=2" &
+    fi
+    if [ $J -gt 0 ]; then 
+        J=$(($J-1))
+    else
+        wait -n 
+        count=$((count + 1))
+    fi
+    echo -ne "\rCURL [ $count / $LEN ]"
+done
+echo
+cd ..
+
+mkdir 512 && cd 512
+count=0
+J=4
+yes '' | head -n $J | cat ../list - | while read i; do
+    trap ctrlc SIGINT
+    if [ -n "$i" ]; then
+        convert ../orig/$i.png -resize 512x512 $i.png &
+    fi
+    if [ $J -gt 0 ]; then 
+        J=$(($J-1))
+    else
+        wait -n 
+        count=$((count + 1))
+    fi
+    echo -ne "\r@512 [ $count / $LEN ]"
+done
+echo
+cd ..
+
+mkdir 128 && cd 128
+count=0
+J=4
+yes '' | head -n $J | cat ../list - | while read i; do
+    trap ctrlc SIGINT
+    if [ -n "$i" ]; then
+        convert ../orig/$i.png -resize 128x128 $i.png &
+    fi
+    if [ $J -gt 0 ]; then 
+        J=$(($J-1))
+    else
+        wait -n 
+        count=$((count + 1))
+    fi
+    echo -ne "\r@128 [ $count / $LEN ]"
+done
+echo
+cd ..
+
+mkdir webp && cd webp
+count=0
+J=4
+yes '' | head -n $J | cat ../list - | while read i; do
+    trap ctrlc SIGINT
+    if [ -n "$i" ]; then
+        cwebp ../512/$i.png -o $i.webp 2>/dev/null &
+    fi
+    if [ $J -gt 0 ]; then 
+        J=$(($J-1))
+    else
+        wait -n 
+        count=$((count + 1))
+    fi
+    echo -ne "\rWEBP [ $count / $LEN ]"
+done
+echo
+cd ..
+
+rm -rf ../res.new.zip
+zip -q -1 -r -0 ../res.new.zip templates webp 128
+
+# ====
+
+cd ..
+rm -rf tmp
+
+[ -f res.zip ] && mv res.zip res.$(date '+%s').zip
+mv res.new.zip res.zip
+rm -rf nowres.txt 
+
+echo
+echo "Done."
+exit 0

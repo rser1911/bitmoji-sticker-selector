@@ -1,0 +1,23 @@
+#!/bin/bash
+
+echo -n "Email: "
+read EMAIL
+
+echo -n "Pass: "
+read -s PASS
+echo
+echo
+
+AGENT="User-Agent: Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Ubuntu Chromium/81.0.4044.122 Chrome/81.0.4044.122 Safari/537.36"
+
+TOKEN="$(curl -s -o - 'https://api.bitmoji.com/user/login' -H "$AGENT" --data-urlencode "username=$EMAIL" --data-urlencode "password=$PASS" --data 'client_id=imoji&grant_type=password&client_secret=secret' | python3 -c 'import json,sys;print(json.load(sys.stdin).get("access_token"))')"
+
+if [[ "$TOKEN" == "None" ]]; then
+    echo "Auth error."
+    exit 1
+fi
+
+ID="$(curl -s -o - 'https://api.bitmoji.com/user/avatar?app_id=13' -H "$AGENT" -H "bitmoji-token: $TOKEN"| python3 -c 'import json,sys;print(json.load(sys.stdin).get("id"))')"
+
+echo "ID: $ID"
+exit 0
