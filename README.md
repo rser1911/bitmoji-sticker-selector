@@ -30,6 +30,7 @@ All stickers are downloaded and available localy.
 
 
 *After you pressed __Send__*
+
 !["send"](images/leftbuttonresult.png "send")
 
 
