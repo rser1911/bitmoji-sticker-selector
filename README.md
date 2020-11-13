@@ -6,34 +6,32 @@ All stickers are downloaded and available localy.
 
 (You are not depend on www.bitmoji.com after resources was downaloded) 
 
-!["main"](images/all.png "main")
 
 *Main window*
+!["main"](images/all.png "main")
 
-
-!["search"](images/search.png "search")
 
 *Search*
+!["search"](images/search.png "search")
 
-
-!["profiles"](images/profiles.png "profiles")
 
 *Profiles*
+!["profiles"](images/profiles.png "profiles")
 
-
-!["info"](images/rightbutton.png "info")
 
 *After you press right mouse button on sticker and holding it*
+!["info"](images/rightbutton.png "info")
 
 
-!["select"](images/leftbutton.png "select")
 
 *After you press left mouse button*
+!["select"](images/leftbutton.png "select")
 
 
-!["send"](images/leftbuttonresult.png "send")
 
 *After you pressed __Send__*
+!["send"](images/leftbuttonresult.png "send")
+
 
 
 Images are loading on scroll.
