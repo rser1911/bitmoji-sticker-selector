@@ -1,11 +1,20 @@
 #!/bin/bash
 
+for i in "zip" "curl" "cwebp" "convert"; do
+    if [ -z "$(which $i)" ]; then
+        echo "Program $i not found."
+        exit 1
+    fi
+done
+
 if [ -z "$1" ]; then
     echo "Usage: $0 \$ID"
     exit 1
 fi
 
 ID="$1"
+CURL="$(which curl)"
+AGENT="User-Agent: Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Ubuntu Chromium/81.0.4044.122 Chrome/81.0.4044.122 Safari/537.36"
 
 function ctrlc(){
     echo
@@ -13,22 +22,30 @@ function ctrlc(){
     kill -9 $(jobs -p) 2>/dev/null
     exit
 }
+
 trap ctrlc SIGINT
 
 function curl (){
-    AGENT="User-Agent: Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Ubuntu Chromium/81.0.4044.122 Chrome/81.0.4044.122 Safari/537.36"
     for i in 1 2 3; do
-        /usr/bin/curl -s -H "$AGENT" "$@"
+        $CURL -s -H "$AGENT" "$@"
         [ $? -eq 0 ] && return 0
     done
     echo
     echo "Cann't download $@"
-    exit
+    exit 1
 }
+
+
+LEN="$($CURL -o /dev/null "https://sdk.bitmoji.com/render/panel/10214655-$ID-v1.png?transparent=1&palette=1" -D - -s| grep 'content-length: 0')"
+if [ -n "$LEN" ]; then
+    echo "Invalid ID."
+    exit 1
+fi
 
 rm -rf tmp
 mkdir tmp
 cd tmp
+
 # ======
 
 curl "https://api.bitmoji.com/content/templates" -o templates
