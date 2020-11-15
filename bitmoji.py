@@ -283,8 +283,8 @@ class SampleApp(tk.Tk):
         self.frame.canv.xview_moveto(0)
         self.frame.canv.yview_moveto(0)
 
-    def dragwin(self, event):
-        self.geometry(f'+{event.x_root}+{event.y_root}')
+    # def dragwin(self, event):
+    #    self.geometry(f'+{event.x_root}+{event.y_root}')
 
     def select_item(self):
         self.sv.set("")
@@ -359,7 +359,7 @@ class SampleApp(tk.Tk):
         self.txt.focus_force()
         
     def stickers_init(self):
-        js = json.loads(self.zip.read("templates"))
+        js = json.loads(self.zip.read("templates").decode('utf-8'))
 
         self.imoji = {}
         self.all_stickers = []
