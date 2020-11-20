@@ -467,6 +467,11 @@ class SampleApp(tk.Tk):
             f.close()
         except OSError:
             resname = "res.zip"
+        
+        if not os.path.isfile(resname):
+            sys.stderr.write('File "' + resname + '" not found. Have you been downloaded resources?\n')
+            self.destroy()
+            return
 
         self.zip = zipfile.ZipFile(resname, "r")
         self.empty = ImageTk.PhotoImage(Image.new('RGB', (128, 128), (255, 255, 255)))
