@@ -15,10 +15,6 @@ All stickers are downloaded and available localy.
 !["search"](images/search.png "search")
 
 
-*Profiles*
-!["profiles"](images/profiles.png "profiles")
-
-
 *After you press right mouse button on sticker and holding it*
 !["info"](images/rightbutton.png "info")
 

@@ -294,13 +294,8 @@ class SampleApp(tk.Tk):
 
         stickers = []
         
-        if value == "<all>" or value == "<profiles>":
-            if value == "<all>":
-                stickers = self.all_stickers
-            else:
-                for f in os.listdir('.'):
-                    if f[0:4] == "res.":
-                        stickers.append(f)
+        if value == "<all>":
+            stickers = self.all_stickers
         else:
             if value[0:1] == '#':
                 for t in self.imoji:
@@ -325,7 +320,6 @@ class SampleApp(tk.Tk):
 
             listbox_items = []
             listbox_items.append('<all>')
-            listbox_items.append('<profiles>')
             listbox_items.extend(map(lambda x: x[1:], self.supertags))
             listbox_items.extend(map(lambda x: '#' + x[4:], self.categories))
 
@@ -365,7 +359,11 @@ class SampleApp(tk.Tk):
         self.all_stickers = []
         self.categories = []
         self.supertags = []
-        
+
+        for f in os.listdir('.'):
+            if f[0:4] == "res.":
+                self.all_stickers.append(f)
+
         for i in js['imoji']:
             self.imoji[i['comic_id']] = i
             self.all_stickers.append(i['comic_id'])
