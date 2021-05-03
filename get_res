@@ -35,8 +35,12 @@ function curl (){
     exit 1
 }
 
+STICKER="10214655"
+if [ -n "$FRIENDS" ]; then
+  STICKER="10214352"
+fi
 
-LEN="$($CURL -o /dev/null "https://sdk.bitmoji.com/render/panel/10214655-$ID-v1.png?transparent=1&palette=1" -D - -s| grep 'content-length: 0')"
+LEN="$($CURL -o /dev/null "https://sdk.bitmoji.com/render/panel/$STICKER-$ID-v1.png?transparent=1&palette=1" -D - -s| grep 'content-length: 0')"
 if [ -n "$LEN" ]; then
     echo "Invalid ID."
     exit 1
@@ -49,8 +53,9 @@ cd tmp
 # ======
 
 curl "https://api.bitmoji.com/content/templates" -o templates
+[ -n "$FRIENDS" ] && sed -i 's|"imoji":|"imoji_old":|;s|"friends":|"imoji":|' templates
 cat templates | python3 -c 'import json,sys;s=json.load(sys.stdin);[print(i["comic_id"]) for i in s["imoji"]]' | sort -u | sed 's|^"||;s|"$||'  > list
-
+# sed -n '1,10p' -i list
 LEN=$(cat list | wc -l)
 
 mkdir orig && cd orig

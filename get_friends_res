@@ -1,0 +1,36 @@
+#!/bin/bash
+
+if [ -z "$2" ]; then
+    echo "Usage: $0 \$ID1 \$ID2"
+    exit 1
+fi
+
+ID1="$1"
+ID2="$2"
+STICKER_MAIN=10214655
+STICKER_FRIENDS=10134282
+export FRIENDS=1
+
+echo -e  "== 1 / 3 == [ Download first part ]\n"
+./get_res "$ID1-$ID2"
+[ $? -ne 0 ] && exit 1
+mv res.zip res.a.zip
+
+echo -e "\n== 2 / 3 == [ Download second part ]\n"
+./get_res "$ID2-$ID1"
+[ $? -ne 0 ] && exit 1
+mv res.zip res.b.zip
+
+echo -e "\n== 3 / 3 == [ Merge parts ]\n"
+rm -rf tmp
+mkdir tmp
+cd tmp
+unzip -q ../res.a.zip "128/$STICKER_FRIENDS.png"
+mv "128/$STICKER_FRIENDS.png" "128/$STICKER_MAIN.png"
+zip  -q -r ../res.a.zip "128/$STICKER_MAIN.png"
+cd ..
+rm -rf tmp
+
+./merge_res res.a.zip res.b.zip res.zip
+echo -e "Done."
+exit 0

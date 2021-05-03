@@ -53,6 +53,8 @@ pip3 install --user Pillow
 6. ...
 7. **PROFIT!!!**
 
+You can also use ```$./get_friends_res $ID1 $ID2``` for fetching friends resource pack.
+
 ## THANKS
 Bitmoji for stickers.
 https://github.com/JoshCheek/bitmoji for information.

@@ -1,0 +1,60 @@
+#!/bin/bash
+
+if [ -z "$3" ]; then
+    echo "Usage: $0 res.a.zip res.b.zip res.zip"
+    exit 1
+fi
+
+rm -rf "./$3"
+
+# ===
+
+rm -rf tmp
+mkdir tmp
+cd tmp
+
+unzip -q "../$1"
+mv templates templates.a
+
+cd 128
+find -type f -printf "mv ./%f ./a%f\n" | bash -s
+cp a10214655.png 10214655.png
+cd ..
+
+cd webp
+find -type f -printf "mv ./%f ./a%f\n" | bash -s
+cd ..
+
+zip -q -r "../$3" 128 webp
+rm -rf 128 webp
+
+unzip -q "../$2"
+mv templates templates.b
+
+cd 128
+find -type f -printf "mv ./%f ./b%f\n" | bash -s
+cd ..
+
+cd webp
+find -type f -printf "mv ./%f ./b%f\n" | bash -s
+cd ..
+
+zip -q -r "../$3" 128 webp
+rm -rf 128 webp
+
+echo '[' > templates.0
+cat templates.a | sed 's|"comic_id":"|"comic_id":"a|g' >> templates.0
+echo ',' >> templates.0
+cat templates.b | sed 's|"comic_id":"|"comic_id":"b|g' >> templates.0
+echo ']' >> templates.0
+cat templates.0 | python3 -c 'import json,sys; s=json.load(sys.stdin);'\
+'a = s[0]["imoji"]; b = s[1]["imoji"]; n = min(len(a), len(b));'\
+'r = [None] * (n*2); r[::2] = a[:n]; r[1::2] = b[:n];'\
+'r.extend(a[n:]); r.extend(b[n:]);'\
+'json.dump({"imoji": r}, sys.stdout)' > templates
+
+zip -q -r "../$3" templates
+cd ..
+rm -rf tmp
+
+exit 0
