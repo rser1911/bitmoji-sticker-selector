@@ -3,14 +3,23 @@
 COLS=8
 ROWS=5
 X=100
-Y=100
+Y=50
 
 cd "$( dirname "${BASH_SOURCE[0]}" )"
 TMPFILE="$PWD/bitmoji.webp"
 
 F="$(python3 bitmoji.py $COLS $ROWS $X $Y "$TMPFILE")"
 if [ -n "$F" ]; then
-    echo -n "file://$F" | xclip -selection clipboard -t text/uri-list
-    xvkbd -window 'Telegram*' -xsendevent -text "\\Cv" 2>/dev/null
+    if [[ "$OSTYPE" == "darwin"* ]]; then
+        osascript -e 'set the clipboard to (POSIX file "'$TMPFILE'")'
+        osascript -e 'tell application "Telegram" to activate'
+        sleep 0.5
+        osascript -e 'tell application "System Events" to keystroke "v" using {command down}'
+    elif [[ "$OSTYPE" == "linux"* ]]; then
+        echo -n "file://$F" | xclip -selection clipboard -t text/uri-list
+        xvkbd -window 'Telegram*' -xsendevent -text "\\Cv" 2>/dev/null
+    else
+        echo "Windows"
+    fi
 fi
 
